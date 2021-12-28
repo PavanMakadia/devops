@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  config.json: |
+    {
+      "name": "node-app",
+      "environment": "development",
+      "configPath": "/app/config.json"
+    }
+kind: ConfigMap
+metadata:
+  name: cnf-configfile
+  namespace: ns-pilot

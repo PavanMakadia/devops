@@ -1,0 +1,19 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+    name: demo-cron-job
+    namespace: ns-pilot
+spec:
+  schedule: "2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            application: demo-cron-job
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: demo-cron-job
+            image: devopscube/kubernetes-job-demo:latest
+            args: ["100"]

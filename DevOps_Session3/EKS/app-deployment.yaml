@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    application: node-app
+    environment: development
+  name: pod-node-app
+  namespace: ns-pilot
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      application: node-app
+      environment: development
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        application: node-app
+        environment: development
+    spec:
+      containers:
+        - env:
+            - name: NODE_ENV
+              value: development
+            - name: PORT
+              value: "9000"
+            - name: HTTP_LOGGING
+              value: "true"
+            - name: COMPRESSION
+              value: "true"
+          image: pavanmakadia/node-app:demo
+          imagePullPolicy: IfNotPresent # Always
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 9000
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 8
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 9000
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 8
+          name: pod-node-app
+          ports:
+            - containerPort: 9000
+              name: http
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1
+              memory: 1024Mi
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /tmp
+              name: cache-volume
+            - mountPath: /app/config.json
+              name: configfile
+              subPath: config.json
+      volumes:
+        # - emptyDir: {}
+        #   name: cache-volume
+        - hostPath:
+            path: /tmp/node-app
+          name: cache-volume
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: config.json
+                path: config.json
+            name: cnf-configfile
+          name: configfile

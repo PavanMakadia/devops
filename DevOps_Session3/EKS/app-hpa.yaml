@@ -1,0 +1,26 @@
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    application: node-app
+    environment: development
+  name: hpa-node-app
+  namespace: ns-demo
+spec:
+  maxReplicas: 15
+  minReplicas: 10
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: pod-node-app
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 70
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 70
+#  targetCPUUtilizationPercentage: 80
+#  targetMemoryUtilizationPercentage: 80

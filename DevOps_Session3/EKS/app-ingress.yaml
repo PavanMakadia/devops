@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+    nginx.ingress.kubernetes.io/proxy-buffering: "on"
+    # cert-manager.io/cluster-issuer: example-issuer
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   more_set_headers "X-Frame-Options: SAMEORIGIN";
+    #   more_set_headers "X-XSS-Protection: 1; mode=block";
+    #   more_set_headers "X-Content-Type-Options: nosniff";
+    #   more_set_headers "Content-Security-Policy: default-src 'self' blob: https: data: 'unsafe-inline' 'unsafe-eval' ";
+  labels:
+    app: node-app
+    env: dev
+  name: ingress-node-app
+  namespace: ns-demo
+spec:
+  rules:
+    - host: node-app.example.com
+      http:
+        paths:
+          - backend:
+              serviceName: svc-node-app
+              servicePort: 80
+            path: /
+  # tls:
+  #   - hosts:
+  #       - node-app.example.com
+  #     secretName: example-cert

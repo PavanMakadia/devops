@@ -1,0 +1,17 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: dev-cluster
+  region: ap-south-1
+
+nodeGroups:
+  - name: ng-1
+    instanceType: t3a.medium 
+    minSize: 2
+    maxSize: 3
+    desiredCapacity: 2
+    labels: {role: worker}
+    volumeSize: 30
+    ssh:
+      allow: true # will use ~/.ssh/id_rsa.pub as the default ssh key
